@@ -2,9 +2,7 @@
 
 # Flight plan - Plan your Concourse Pipeline with ease
 
-CDK like project, which supports developers to 
-build there Concourse pipelines within code with 
-auto completion and validation.
+AWS CDK like tool to code Concourse pipelines, (with autocompletion and validation.)
 
 
 ## Planed features
