@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "flightplan"
+version = "0.1.0"
+description = "Code based description for Concourse pipelines"
+authors = ["Maic Siemering <maic@siemering.tech>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pydantic = "*"
+typer = "*"
+pyyaml = "*"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.0.1"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
