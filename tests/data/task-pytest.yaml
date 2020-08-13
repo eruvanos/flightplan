@@ -1,0 +1,21 @@
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: python
+    tag: alpine
+
+inputs:
+  - name: src
+
+run:
+  path: sh
+  args:
+    - -ec
+    - |
+      export TERM=dumb
+      cd src
+      pip install pipenv
+      pipenv install --dev
+      pipenv run pytest tests

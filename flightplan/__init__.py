@@ -1,6 +1,6 @@
 __version__ = '0.1.0'
 
-from typing import List
+from typing import List, Dict, Union
 
 from pydantic import BaseModel, Field
 
@@ -16,7 +16,7 @@ class Stack:
         return self.elements.pop()
 
     def peek(self):
-        return self.elements[-1]
+        return self.elements[-1] if self.elements else None
 
 
 stack = Stack()
@@ -62,6 +62,18 @@ class Step(BaseModel):
     pass
 
 
+class Get(Step):
+    get: str = Field(alias='name')
+    resource: str
+    trigger: bool
+
+
+class Put(Step):
+    put: str = Field(alias='name')
+    resource: str
+    params: Dict[str, Union[int, str]]
+
+
 class Task(Step):
     task: str = Field(alias='name')
     config: TaskConfig = None
@@ -90,6 +102,9 @@ class Job(BaseModel):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        # exclude list if unset, but allows adding new
+        self.plan = list(self.plan)
+
         peek = stack.peek()
         if isinstance(peek, Pipeline):
             peek.add_job(self)
@@ -105,9 +120,30 @@ class Job(BaseModel):
         if stack.pop() != self:
             raise Exception('Invalid state')
 
+
+class Resource(BaseModel):
+    name: str
+    type: str
+    source: Dict[str, Union[int, str]]
+
+
+class ResourceType(BaseModel):
+    name: str
+    type: str
+    source: Source
+
+
 class Pipeline(BaseModel):
     name: str = Field(title='Title of the pipeline, not included in yaml')
+    resource_types: List[ResourceType] = Field(default_factory=list)
+    resources: List[Resource] = Field(default_factory=list)
     jobs: List[Job] = Field(default_factory=list)
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        # exclude list if unset, but allows adding new
+        self.jobs = list(self.jobs)
 
     def add_job(self, job: Job):
         self.jobs.append(job)
@@ -123,15 +159,20 @@ class Pipeline(BaseModel):
     def synth(self):
         return self.dict(
             exclude={'name'},
+            exclude_unset=True
         )
 
 
 __all__ = [
     'Job',
+    'Get',
+    'Put',
     'Task',
     'TaskConfig',
     'Source',
     'ImageResource',
     'Command',
+    'Resource',
+    'ResourceType',
     'Pipeline',
 ]

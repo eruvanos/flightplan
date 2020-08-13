@@ -1,23 +1,5 @@
-import json
-from pathlib import Path
-
-import yaml
-
 from flightplan import *
-
-TEST_DATA = Path(__file__).parent / 'data'
-
-
-def load_yaml(file: str):
-    with (TEST_DATA / file).open() as f:
-        return yaml.load(f)
-
-
-def assert_dict_equal(expected: dict, actual: dict):
-    dict_a_str = json.dumps(expected, sort_keys=True, indent=2)
-    dict_b_str = json.dumps(actual, sort_keys=True, indent=2)
-
-    assert dict_a_str == dict_b_str
+from tests import load_yaml, assert_dict_equal
 
 
 def test_version():
@@ -56,7 +38,7 @@ def test_render_hello_world():
     )
 
     result = pipeline.synth()
-    assert_dict_equal(result, load_yaml('hello_world.yaml'))
+    assert result == load_yaml('hello_world.yaml')
 
 
 def test_render_hello_world_dynamic():
@@ -83,7 +65,7 @@ def test_render_hello_world_dynamic():
     )
 
     result = pipeline.synth()
-    assert_dict_equal(result, load_yaml('hello_world.yaml'))
+    assert result == load_yaml('hello_world.yaml')
 
 
 def test_render_hello_world_with_construct():
@@ -102,4 +84,4 @@ def test_render_hello_world_with_construct():
                 )
 
     result = pipeline.synth()
-    assert_dict_equal(result, load_yaml('hello_world.yaml'))
+    assert result == load_yaml('hello_world.yaml')
