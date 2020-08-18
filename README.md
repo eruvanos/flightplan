@@ -11,6 +11,12 @@ AWS CDK like tool to code Concourse pipelines, (with autocompletion and validati
 * Set pipeline from cli
 * Predefined code constructs to simplify common pipelines
 
+## Setup 
+
+```bash
+pip install git+https://github.com/eruvanos/flightplan.git
+```
+
 
 ## Usage
 
@@ -18,19 +24,19 @@ AWS CDK like tool to code Concourse pipelines, (with autocompletion and validati
 Convert a pipeline yaml and render a flightplan `.py` file.
 
 ```bash
-python cli.py import <src.yaml> <target.py>
+fp import <src.yaml> <target.py>
 ```
 
 ### Synthesize yaml from flightplan `.py` file
 
 ```bash
-python cli.py synth <src.py> <target.yaml>
+fp synth <src.py> <target.yaml>
 ```
 
 ### Direct Fly Set Pipeline
 
 ```bash
-python cli.py set <fly-target> <pipeline_name> <src.py>
+fp set <fly-target> <pipeline_name> <src.py>
 ```
 
 
@@ -69,7 +75,3 @@ Pipeline(
     ]
 ).synth()
 ``` 
-
-
-
-## Backlog

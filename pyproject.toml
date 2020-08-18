@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "flightplan"
-version = "0.1.0"
+version = "0.1.0b1"
 description = "Code based description for Concourse pipelines"
 authors = ["Maic Siemering <maic@siemering.tech>"]
 license = "MIT"
@@ -20,4 +20,4 @@ requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
 
 [tool.poetry.scripts]
-fp = 'cli:main'
+fp = 'flightplan.cli:main'
