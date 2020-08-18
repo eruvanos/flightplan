@@ -20,12 +20,27 @@ pip install git+https://github.com/eruvanos/flightplan.git
 
 ## Usage
 
+### Quickstart
+Generate a basic pipeline example.
+
+```bash
+fp quickstart
+```
+
 ### Import existing pipeline file
 Convert a pipeline yaml and render a flightplan `.py` file.
 
 ```bash
 fp import <src.yaml> <target.py>
 ```
+
+### Import existing pipeline from fly
+Convert a pipeline from fly and render a flightplan `.py` file.
+
+```bash
+fp get <fly_target> <pipeline_name> <target.py>
+```
+
 
 ### Synthesize yaml from flightplan `.py` file
 
