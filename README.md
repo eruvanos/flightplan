@@ -14,7 +14,7 @@ AWS CDK like tool to code Concourse pipelines, (with autocompletion and validati
 ## Setup 
 
 ```bash
-pip install git+https://github.com/eruvanos/flightplan.git
+pip3 install git+https://github.com/eruvanos/flightplan.git
 ```
 
 

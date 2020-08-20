@@ -15,7 +15,9 @@ from flightplan.render.task import (
     Get,
     Put,
     Task,
-    Mapping
+    Mapping,
+    InParallel,
+    InParallelConfig
 )
 
 __all__ = [
@@ -23,6 +25,8 @@ __all__ = [
     'Get',
     'Put',
     'Task',
+    'InParallelConfig',
+    'InParallel',
     'TaskConfig',
     'ImageResource',
     'Command',
