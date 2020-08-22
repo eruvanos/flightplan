@@ -1,15 +1,14 @@
 from typing import List
 
-from pydantic import BaseModel, Field
-
 from flightplan.render.task import Task, Step
+from flightplan.render.utils import BaseModel
 
 
 class Job(BaseModel):
     name: str
     public: bool = False
     serial: bool = False
-    plan: List[Step] = Field(default_factory=list)
+    plan: List[Step] = None
 
     class Config:
         use_enum_values = True

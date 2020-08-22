@@ -1,14 +1,15 @@
 from enum import Enum
 from typing import List, Dict, Union, Optional, ForwardRef
 
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 from flightplan.render.common import Source
+from flightplan.render.utils import BaseModel
 
 
 class Command(BaseModel):
     path: str
-    args: List[str] = Field(default_factory=list)
+    args: List[str] = None
 
 
 class ImageResource(BaseModel):
@@ -24,19 +25,19 @@ class TaskConfig(BaseModel):
     platform: str
     image_resource: ImageResource
     run: Command
-    inputs: List[Mapping] = Field(default_factory=list)
-    outputs: List[Mapping] = Field(default_factory=list)
-    params: Dict[str, Union[bool, int, str, list, dict]] = Field(default_factory=dict)
+    inputs: List[Mapping] = None
+    outputs: List[Mapping] = None
+    params: Dict[str, Union[bool, int, str, list, dict]] = None
 
 
 # Create ForwardRefs for all step types
-Get = ForwardRef('Get')
-Put = ForwardRef('Put')
-Task = ForwardRef('Task')
-SetPipeline = ForwardRef('SetPipeline')
-Do = ForwardRef('Do')
-Try = ForwardRef('Try')
-InParallel = ForwardRef('InParallel')
+Get = ForwardRef("Get")
+Put = ForwardRef("Put")
+Task = ForwardRef("Task")
+SetPipeline = ForwardRef("SetPipeline")
+Do = ForwardRef("Do")
+Try = ForwardRef("Try")
+InParallel = ForwardRef("InParallel")
 Step = Union[Get, Put, Task, SetPipeline, Do, Try, InParallel]
 
 
@@ -48,7 +49,7 @@ class _Step(BaseModel):
     # Common fields,
     timeout: Optional[str] = None
     attempts: Optional[int] = None
-    tags: Optional[List[str]] = Field(default_factory=list)
+    tags: Optional[List[str]] = None
     on_success: Optional[Step] = None
     on_failure: Optional[Step] = None
     on_abort: Optional[Step] = None
@@ -57,11 +58,11 @@ class _Step(BaseModel):
 
 
 class GetVersion(str, Enum):
-    latest = 'latest'
-    every = 'every'
+    latest = "latest"
+    every = "every"
 
     def __repr__(self):
-        return f'{self.__class__.__name__}.{self.name}'
+        return f"{self.__class__.__name__}.{self.name}"
 
 
 class Get(BaseModel):
@@ -70,15 +71,15 @@ class Get(BaseModel):
 
     get: str
     resource: Optional[str] = None
-    passed: List[str] = Field(default_factory=list)
-    params: Dict[str, Union[bool, int, str, list, dict]] = Field(default_factory=dict)
+    passed: List[str] = None
+    params: Dict[str, Union[bool, int, str, list, dict]] = None
     trigger: bool = False
-    version: Optional[GetVersion] = GetVersion.latest.value
+    version: Optional[GetVersion] = GetVersion.latest
 
     # Common fields,
     timeout: Optional[str] = None
     attempts: Optional[int] = None
-    tags: Optional[List[str]] = Field(default_factory=list)
+    tags: Optional[List[str]] = None
     on_success: Optional[Step] = None
     on_failure: Optional[Step] = None
     on_abort: Optional[Step] = None
@@ -87,11 +88,11 @@ class Get(BaseModel):
 
 
 class PutInput(str, Enum):
-    all = 'all'
-    detect = 'detect'
+    all = "all"
+    detect = "detect"
 
     def __repr__(self):
-        return f'{self.__class__.__name__}.{self.name}'
+        return f"{self.__class__.__name__}.{self.name}"
 
 
 class Put(BaseModel):
@@ -101,13 +102,13 @@ class Put(BaseModel):
     put: str
     resource: Optional[str] = None
     inputs: Optional[PutInput] = PutInput.all
-    params: Dict[str, Union[bool, int, str, list, dict]] = Field(default_factory=dict)
-    get_params: Dict[str, Union[bool, int, str, list, dict]] = Field(default_factory=dict)
+    params: Dict[str, Union[bool, int, str, list, dict]] = None
+    get_params: Dict[str, Union[bool, int, str, list, dict]] = None
 
     # Common fields,
     timeout: Optional[str] = None
     attempts: Optional[int] = None
-    tags: Optional[List[str]] = Field(default_factory=list)
+    tags: Optional[List[str]] = None
     on_success: Optional[Step] = None
     on_failure: Optional[Step] = None
     on_abort: Optional[Step] = None
@@ -122,15 +123,15 @@ class Task(_Step):
     # TODO image https://concourse-ci.org/jobs.html#schema.step.task-step.image
     privileged: bool = False
 
-    vars: Dict[str, Union[bool, int, str, list, dict]] = Field(default_factory=dict)
-    params: Dict[str, Union[bool, int, str, list, dict]] = Field(default_factory=dict)
-    input_mapping: Dict[str, str] = Field(default_factory=dict)
-    output_mapping: Dict[str, str] = Field(default_factory=dict)
+    vars: Dict[str, Union[bool, int, str, list, dict]] = None
+    params: Dict[str, Union[bool, int, str, list, dict]] = None
+    input_mapping: Dict[str, str] = None
+    output_mapping: Dict[str, str] = None
 
     # Common fields,
     timeout: Optional[str] = None
     attempts: Optional[int] = None
-    tags: Optional[List[str]] = Field(default_factory=list)
+    tags: Optional[List[str]] = None
     on_success: Optional[Step] = None
     on_failure: Optional[Step] = None
     on_abort: Optional[Step] = None
@@ -138,18 +139,17 @@ class Task(_Step):
     ensure: Optional[Step] = None
 
 
-
 class SetPipeline(BaseModel):
     set_pipeline: str
     file: Optional[str] = None
-    vars: Dict[str, Union[bool, int, str, list, dict]] = Field(default_factory=dict)
-    params: Dict[str, Union[bool, int, str, list, dict]] = Field(default_factory=dict)
+    vars: Dict[str, Union[bool, int, str, list, dict]] = None
+    params: Dict[str, Union[bool, int, str, list, dict]] = None
     team: Optional[str] = None
 
     # Common fields,
     timeout: Optional[str] = None
     attempts: Optional[int] = None
-    tags: Optional[List[str]] = Field(default_factory=list)
+    tags: Optional[List[str]] = None
     on_success: Optional[Step] = None
     on_failure: Optional[Step] = None
     on_abort: Optional[Step] = None
@@ -163,14 +163,14 @@ class SetPipeline(BaseModel):
 class Do(BaseModel):
     do: List[Step]
     file: Optional[str] = None
-    vars: Dict[str, Union[bool, int, str, list, dict]] = Field(default_factory=dict)
-    params: Dict[str, Union[bool, int, str, list, dict]] = Field(default_factory=dict)
+    vars: Dict[str, Union[bool, int, str, list, dict]] = None
+    params: Dict[str, Union[bool, int, str, list, dict]] = None
     team: Optional[str] = None
 
     # Common fields,
     timeout: Optional[str] = None
     attempts: Optional[int] = None
-    tags: Optional[List[str]] = Field(default_factory=list)
+    tags: Optional[List[str]] = None
     on_success: Optional[Step] = None
     on_failure: Optional[Step] = None
     on_abort: Optional[Step] = None
@@ -182,12 +182,12 @@ class Try(BaseModel):
     class Config:
         allow_population_by_field_name = True
 
-    try_: Step = Field(alias='try')
+    try_: Step = Field(alias="try")
 
     # Common fields,
     timeout: Optional[str] = None
     attempts: Optional[int] = None
-    tags: Optional[List[str]] = Field(default_factory=list)
+    tags: Optional[List[str]] = None
     on_success: Optional[Step] = None
     on_failure: Optional[Step] = None
     on_abort: Optional[Step] = None
@@ -207,7 +207,7 @@ class InParallel(BaseModel):
     # Common fields,
     timeout: Optional[str] = None
     attempts: Optional[int] = None
-    tags: Optional[List[str]] = Field(default_factory=list)
+    tags: Optional[List[str]] = None
     on_success: Optional[Step] = None
     on_failure: Optional[Step] = None
     on_abort: Optional[Step] = None

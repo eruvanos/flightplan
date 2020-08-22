@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "flightplan"
-version = "0.1.0b2"
+version = "0.1.0b3"
 description = "Code based description for Concourse pipelines"
 authors = ["Maic Siemering <maic@siemering.tech>"]
 license = "MIT"

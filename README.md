@@ -4,21 +4,52 @@
 
 AWS CDK like tool to code Concourse pipelines, (with autocompletion and validation.)
 
+## Why not stick with YAML
 
-## Planed features
+Writing YAML files feels not as heavy as XML, 
+but still lacks the comfort of autocompletion and some kind of structuring 
+(Beside anchors or tools like [YTT](https://get-ytt.io/)).
 
-* Generate pipeline YAML from cli (or Python)
-* Set pipeline from cli
-* Predefined code constructs to simplify common pipelines
+The vision of Flightplan does not stop with replacing YAML, the real benefit
+starts with component libraries, which ease the setup of pipelines.
+
+Furthermore these components can be updated, which make all improvements 
+automatically available to all pipelines.  
+
+## Features
+
+* Convert:
+  * YAML -> Python
+  * Python -> YAML
+* Fly integration
+  * Set pipeline
+  * Get pipeline
+* Shiped examples
+  * Hello world
+  * more to come
+
+## Upcoming
+
+* Provide high level components that handle common use cases
 
 ## Setup 
+
+Flightplan requires Python 3.8 and higher.
+
+### Install FlightPlan
 
 ```bash
 pip3 install git+https://github.com/eruvanos/flightplan.git
 ```
 
-
 ## Usage
+
+If you start with Flightplan it is recommended to have a look on the quickstart examples, 
+which are shipped within the cli.
+
+If you want to migrate an existing pipeline you can use 
+ * `fp import` - to convert YAML to Python
+ * `fp get ...` - to get and convert a running pipeline 
 
 ### Quickstart
 Generate a basic pipeline example.
@@ -58,7 +89,8 @@ fp set <fly-target> <pipeline_name> <src.py>
 
 ## Examples
 
-Constructor definitions:
+Quickstart hello world example:
+
 ```python
 from flightplan.render import *
 
