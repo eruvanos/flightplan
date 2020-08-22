@@ -1,0 +1,57 @@
+jobs:
+- name: simple
+  plan:
+  - get: some-resource
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: some-resource
+      outputs:
+      - name: first-task-output
+      platform: linux
+      run:
+        args:
+        - some-resource/first-script.sh
+        path: sh
+    task: first-task
+  - config:
+      caches:
+      - path: first-task-output/blobs
+      - path: second-task-cache
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: some-resource
+      - name: first-task-output
+      platform: linux
+      run:
+        args:
+        - some-resource/second-script.sh
+        path: sh
+    task: second-task
+resources:
+- name: some-resource
+  source:
+    create_files:
+      first-script.sh: |
+        echo not-cached-from-first-task >> first-task-output/not-cached-from-first-task
+
+        mkdir first-task-output/blobs
+        echo blob-contents-from-first-task >> first-task-output/blobs/blob
+      second-script.sh: |
+        cat ./first-task-output/not-cached-from-first-task
+
+        echo not-cached-from-second-task >> first-task-output/not-cached-from-second-task
+        cat ./first-task-output/not-cached-from-second-task
+
+        echo blob-contents-from-second-task >> ./first-task-output/blobs/blob
+        cat ./first-task-output/blobs/blob
+
+        echo second-task-cache-contents >> ./second-task-cache/cache
+        cat ./second-task-cache/cache
+  type: mock

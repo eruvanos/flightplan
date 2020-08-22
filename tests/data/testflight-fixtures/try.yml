@@ -1,0 +1,26 @@
+jobs:
+- name: try-job
+  plan:
+  - try:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - '1'
+          path: exit
+      task: failing-task
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - passing-task succeeded
+        path: echo
+    task: passing-task

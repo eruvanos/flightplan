@@ -20,8 +20,8 @@ class ReprMixin(pydantic.utils.Representation):
         by_alias: bool = False,
         include=None,
         exclude=None,
-        exclude_unset: bool = False,
-        exclude_defaults: bool = True,
+        exclude_unset: bool = True,
+        exclude_defaults: bool = False,
         exclude_none: bool = True,
     ):
         from pydantic.main import _missing

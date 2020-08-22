@@ -1,0 +1,27 @@
+jobs:
+- name: upstream-job
+  plan:
+  - get: some-resource
+  - get: some-image
+- name: downstream-job
+  plan:
+  - get: some-resource
+    passed:
+    - upstream-job
+  - get: some-image
+    passed:
+    - upstream-job
+  - file: some-resource/task.yml
+    image: some-image
+    task: run
+resources:
+- name: some-resource
+  source:
+    create_files:
+      task.yml: ((task_content))
+    no_initial_version: true
+  type: mock
+- name: some-image
+  source:
+    repository: busybox
+  type: registry-image

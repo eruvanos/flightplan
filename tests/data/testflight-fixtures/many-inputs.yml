@@ -1,0 +1,33 @@
+jobs:
+- name: some-job
+  plan:
+  - get: some-resource-a
+  - get: some-resource-b
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: some-resource-a
+      - name: some-resource-b
+      platform: linux
+      run:
+        args:
+        - -c
+        - |
+          echo a has $(cat some-resource-a/version)
+          echo b has $(cat some-resource-b/version)
+        path: sh
+    task: cat-files
+resources:
+- name: some-resource-a
+  source:
+    initial_version: ((hash-1))
+    no_initial_version: true
+  type: mock
+- name: some-resource-b
+  source:
+    initial_version: ((hash-2))
+    no_initial_version: true
+  type: mock

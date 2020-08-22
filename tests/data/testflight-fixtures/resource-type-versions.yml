@@ -1,0 +1,48 @@
+jobs:
+- name: initial-job
+  plan:
+  - get: some-resource
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: custom-resource-type
+      inputs:
+      - name: some-resource
+      platform: linux
+      run:
+        args:
+        - -c
+        - 'echo fetched version: $(cat some-resource/version)'
+        path: sh
+    task: print-fetched-stuff
+- name: passed-job
+  plan:
+  - get: some-resource
+    passed:
+    - initial-job
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: custom-resource-type
+      inputs:
+      - name: some-resource
+      platform: linux
+      run:
+        args:
+        - -c
+        - 'echo fetched version: $(cat some-resource/version)'
+        path: sh
+    task: print-fetched-stuff
+resource_types:
+- name: custom-resource-type
+  source:
+    initial_version: ((hash))
+    mirror_self: true
+  type: mock
+resources:
+- name: some-resource
+  source:
+    initial_version: ((hash))
+  type: custom-resource-type

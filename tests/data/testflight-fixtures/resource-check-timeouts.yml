@@ -1,0 +1,10 @@
+jobs:
+- name: resource-getter
+  plan:
+  - get: my-resource
+resources:
+- check_timeout: 10s
+  name: my-resource
+  source:
+    check_delay: ((check_delay))
+  type: mock

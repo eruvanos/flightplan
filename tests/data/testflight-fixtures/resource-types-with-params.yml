@@ -1,0 +1,29 @@
+jobs:
+- name: resource-test
+  plan:
+  - get: my-resource
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: my-resource
+      platform: linux
+      run:
+        args:
+        - my-resource/version
+        path: cat
+    task: use-custom-resource-type
+resource_types:
+- name: mock-via-params
+  params:
+    mirror_self_via_params: true
+  source:
+    initial_version: ((hash))
+  type: mock
+resources:
+- name: my-resource
+  source:
+    initial_version: ((hash))
+  type: mock-via-params

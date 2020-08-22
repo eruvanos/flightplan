@@ -106,7 +106,7 @@ Pipeline(
                         platform='linux',
                         image_resource=ImageResource(
                             type='docker-image',
-                            source=Source(
+                            source=dict(
                                 repository='busybox',
                                 tag='latest'
                             )

@@ -1,0 +1,36 @@
+jobs:
+- name: some-job
+  plan:
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      outputs:
+      - name: output-1
+        path: output-1-src/
+      - name: output-2
+        path: output-2-src/
+      platform: linux
+      run:
+        args:
+        - -c
+        - |
+          touch output-1-src/file-1
+          touch output-2-src/file-2
+        path: sh
+    task: output-producer
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: output-1
+      - name: output-2
+      platform: linux
+      run:
+        args:
+        - .
+        path: find
+    task: find-files

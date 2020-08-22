@@ -1,0 +1,15 @@
+jobs:
+- name: failing-job
+  plan:
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - -c
+        - exit 1
+        path: sh
+    task: failing-task

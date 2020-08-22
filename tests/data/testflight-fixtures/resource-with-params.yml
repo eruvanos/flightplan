@@ -1,0 +1,15 @@
+jobs:
+- name: without-params
+  plan:
+  - get: some-git-resource
+- name: with-params
+  plan:
+  - get: some-git-resource
+    params:
+      create_files_via_params:
+        hello: hello
+resources:
+- name: some-git-resource
+  source:
+    force_version: ((unique_version))
+  type: mock

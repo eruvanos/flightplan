@@ -1,0 +1,26 @@
+jobs:
+- name: missing-outputs-job
+  plan:
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - abandonedfile
+        path: touch
+    task: missing-outputs
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: missing-outputs
+        path: .
+      platform: linux
+      run:
+        path: /bin/true
+    task: input-deprived

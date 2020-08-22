@@ -1,19 +1,18 @@
-from typing import Dict, Union, List, ClassVar, Optional
+from enum import Enum
+from typing import Dict, List, ClassVar, Optional, Any
 
-from flightplan.render import Job
-from flightplan.render.common import Source
-
-# TODO fix handling of default list and dict
+from flightplan.render.job import Job
+from flightplan.render.task import Get, Put, LoadVar
 from flightplan.render.utils import BaseModel
 
 
 class Resource(BaseModel):
     name: str
     type: str
-    source: Dict[str, Union[int, str, list]]
+    source: Dict
     old_name: Optional[str]
     icon: Optional[str]
-    # version: # TODO https://concourse-ci.org/resources.html#schema.resource.version
+    version: Optional[Dict[str, str]]
     check_every: Optional[str]
     tags: Optional[List[str]]
     public: Optional[bool]
@@ -23,20 +22,42 @@ class Resource(BaseModel):
 class ResourceType(BaseModel):
     name: str
     type: str
-    source: Source
+    source: Dict
     privileged: Optional[bool] = None
-    params: Dict[str, Union[bool, int, str, list, dict]] = None
+    params: Optional[Dict] = None
     check_every: Optional[str] = None
     tags: Optional[List[str]] = None
     unique_version_history: Optional[bool] = None
+
+
+class GroupConfig(BaseModel):
+    name: str
+    jobs: Optional[List[str]] = None
+
+
+class VarSourceType(str, Enum):
+    vault = "vault"
+    dummy = "dummy"
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}.{self.name}"
+
+
+class VarSource(BaseModel):
+    class Config:
+        use_enum_values = True
+
+    name: str
+    type: VarSourceType
+    config: Dict
 
 
 class Pipeline(BaseModel):
     jobs: List[Job] = None
     resources: List[Resource] = None
     resource_types: List[ResourceType] = None
-    # var_source: # TODO https://concourse-ci.org/pipelines.html#schema.pipeline.var_sources
-    groups: Optional[Dict[str, List[str]]] = None
+    var_source: Optional[VarSource]
+    groups: Optional[List[GroupConfig]] = None
 
     pipelines: ClassVar[List["Pipeline"]] = []
 
@@ -64,7 +85,23 @@ class Pipeline(BaseModel):
         return self.dict(
             by_alias=True,
             exclude={"name"},
-            # exclude_unset=True,
+            exclude_unset=True,
             # exclude_none=True,
-            exclude_defaults=True,
+            # exclude_defaults=True,
         )
+
+    @classmethod
+    def parse_obj(cls, obj: Any) -> "Pipeline":
+        models_contain_enum = [Get, Put, LoadVar, VarSource]
+
+        # Disable Enum representation as string
+        for model in models_contain_enum:
+            model.Config.use_enum_values = False
+
+        result = super().parse_obj(obj)
+
+        # Enable Enum representation as string
+        for model in models_contain_enum:
+            model.Config.use_enum_values = True
+
+        return result

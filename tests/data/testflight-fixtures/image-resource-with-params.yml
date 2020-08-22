@@ -1,0 +1,43 @@
+jobs:
+- name: without-params
+  plan:
+  - get: some-resource
+- name: with-params
+  plan:
+  - get: some-resource
+    params:
+      create_files_via_params:
+        foo: bar
+- name: image-resource-with-params
+  plan:
+  - config:
+      image_resource:
+        params:
+          create_files_via_params:
+            foo: bar
+        source:
+          initial_version: ((initial_version))
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        path: /bin/true
+    task: image-resource-task
+- name: image-resource-without-params
+  plan:
+  - config:
+      image_resource:
+        source:
+          initial_version: ((initial_version))
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        path: /bin/true
+    task: image-resource-task
+resources:
+- name: some-resource
+  source:
+    initial_version: ((initial_version))
+    mirror_self: true
+  type: mock

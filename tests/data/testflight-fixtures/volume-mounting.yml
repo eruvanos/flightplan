@@ -1,0 +1,223 @@
+jobs:
+- name: input-under-output
+  plan:
+  - get: some-resource
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: some-resource
+        path: some-output/some-resource
+      outputs:
+      - name: some-output
+      platform: linux
+      run:
+        path: 'true'
+    task: step1
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: some-output
+      platform: linux
+      run:
+        args:
+        - -ec
+        - 'ls some-output
+
+          '
+        path: sh
+    task: step2
+- name: output-with-dot-with-input-within
+  plan:
+  - get: some-resource
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: some-resource
+      outputs:
+      - name: some-output
+        path: .
+      platform: linux
+      run:
+        args:
+        - -ec
+        - |
+          echo foo > some-resource/file-within
+          echo bar > file-at-root
+        path: sh
+    task: step1
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: some-output
+      platform: linux
+      run:
+        args:
+        - -ec
+        - 'cat some-output/file-at-root
+
+          '
+        path: sh
+    task: step2
+- name: input-under-input
+  plan:
+  - get: some-resource
+  - get: other-resource
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: some-resource
+      - name: other-resource
+        path: some-resource/some_dir
+      platform: linux
+      run:
+        args:
+        - -ec
+        - 'cat some-resource/some_file some-resource/some_dir/other_file
+
+          '
+        path: sh
+    task: test
+- name: output-under-input
+  plan:
+  - get: some-resource
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: some-resource
+      outputs:
+      - name: some-output
+        path: some-resource/some_dir
+      platform: linux
+      run:
+        args:
+        - -ec
+        - 'echo hello > some-resource/some_dir/some_file
+
+          '
+        path: sh
+    task: step1
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: some-output
+      platform: linux
+      run:
+        args:
+        - some-output/some_file
+        path: cat
+    task: step2
+- name: input-same-output
+  plan:
+  - get: some-resource
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: some-resource
+      outputs:
+      - name: some-output
+        path: some-resource
+      platform: linux
+      run:
+        args:
+        - -ec
+        - 'echo "hello" > some-resource/a_file
+
+          '
+        path: sh
+    task: step1
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: some-output
+      platform: linux
+      run:
+        args:
+        - -ec
+        - 'cat some-output/a_file
+
+          '
+        path: sh
+    task: step2
+- name: input-same-input
+  plan:
+  - get: some-resource
+  - get: other-resource
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: some-resource
+      - name: other-resource
+        path: some-resource
+      platform: linux
+      run:
+        args:
+        - -ec
+        - 'cat some-resource/other_file
+
+          '
+        path: sh
+    task: step1
+- name: input-output-same-path-diff-name
+  plan:
+  - get: some-resource
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: some-resource
+        path: some-resource
+      outputs:
+      - name: some-output
+        path: some-resource
+      platform: linux
+      run:
+        args:
+        - -ec
+        - 'test -f some-resource/some_file && ! test -f some-resource/other_file
+
+          '
+        path: sh
+    task: step1
+resources:
+- name: some-resource
+  source:
+    create_files:
+      some_file: hello
+  type: mock
+- name: other-resource
+  source:
+    create_files:
+      other_file: world
+  type: mock

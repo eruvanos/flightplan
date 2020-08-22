@@ -1,0 +1,14 @@
+jobs:
+- name: upstream-job
+  plan:
+  - get: some-resource
+- name: downstream-job
+  plan:
+  - get: some-resource
+    passed:
+    - upstream-job
+resources:
+- name: some-resource
+  source:
+    no_initial_version: true
+  type: mock

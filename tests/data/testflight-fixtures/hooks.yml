@@ -1,0 +1,533 @@
+jobs:
+- ensure:
+    config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - passing job on job ensure
+        path: echo
+    task: passing-job-on-job-ensure
+  name: some-passing-job
+  on_abort:
+    config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - passing job on job abort
+        path: echo
+    task: passing-job-on-job-abort
+  on_error:
+    config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - passing job on job error
+        path: echo
+    task: passing-job-on-job-error
+  on_failure:
+    config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - passing job on job failure
+        path: echo
+    task: passing-job-on-job-failure
+  on_success:
+    config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - passing job on job success
+        path: echo
+    task: passing-job-on-job-success
+  plan:
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - pass
+        path: echo
+    ensure:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - passing job ensure
+          path: echo
+      task: passing-job-ensure
+    on_abort:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - passing job on abort
+          path: echo
+      task: passing-job-on-abort
+    on_error:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - passing job on error
+          path: echo
+      task: passing-job-on-error
+    on_failure:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - passing job on failure
+          path: echo
+      task: passing-job-on-failure
+    on_success:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - passing job on success
+          path: echo
+      task: passing-job-on-success
+    task: pass
+- ensure:
+    config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - failing job on job ensure
+        path: echo
+    task: failing-job-on-job-ensure
+  name: some-failing-job
+  on_abort:
+    config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - failing job on job abort
+        path: echo
+    task: failing-job-on-job-abort
+  on_error:
+    config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - failing job on job error
+        path: echo
+    task: failing-job-on-job-error
+  on_failure:
+    config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - failing job on job failure
+        path: echo
+    task: failing-job-on-job-failure
+  on_success:
+    config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - failing job on job success
+        path: echo
+    task: failing-job-on-job-success
+  plan:
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        path: 'false'
+    ensure:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - failing job ensure
+          path: echo
+      task: failing-job-ensure
+    on_abort:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - failing job on abort
+          path: echo
+      task: failing-job-on-abort
+    on_error:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - failing job on error
+          path: echo
+      task: failing-job-on-error
+    on_failure:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - failing job on failure
+          path: echo
+      task: failing-job-on-failure
+    on_success:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - failing job on success
+          path: echo
+      task: failing-job-on-success
+    task: fail
+- ensure:
+    config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - aborted job on job ensure
+        path: echo
+    task: aborted-job-on-job-ensure
+  name: some-aborted-job
+  on_abort:
+    config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - aborted job on job abort
+        path: echo
+    task: aborted-job-on-job-abort
+  on_error:
+    config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - aborted job on job error
+        path: echo
+    task: aborted-job-on-job-error
+  on_failure:
+    config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - aborted job on job failure
+        path: echo
+    task: aborted-job-on-job-failure
+  on_success:
+    config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - aborted job on job success
+        path: echo
+    task: aborted-job-on-job-success
+  plan:
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - -c
+        - |
+          while sleep 1; do
+            echo waiting to be aborted
+          done
+        path: sh
+    ensure:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - aborted job ensure
+          path: echo
+      task: aborted-job-ensure
+    on_abort:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - aborted job on abort
+          path: echo
+      task: aborted-job-on-abort
+    on_error:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - aborted job on error
+          path: echo
+      task: aborted-job-on-error
+    on_failure:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - aborted job on failure
+          path: echo
+      task: aborted-job-on-failure
+    on_success:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - aborted job on success
+          path: echo
+      task: aborted-job-on-success
+    task: abort
+- ensure:
+    config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - errored job on job ensure
+        path: echo
+    task: errored-job-on-job-ensure
+  name: some-errored-job
+  on_abort:
+    config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - errored job on job abort
+        path: echo
+    task: errored-job-on-job-abort
+  on_error:
+    config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - errored job on job error
+        path: echo
+    task: errored-job-on-job-error
+  on_failure:
+    config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - errored job on job failure
+        path: echo
+    task: errored-job-on-job-failure
+  on_success:
+    config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - errored job on job success
+        path: echo
+    task: errored-job-on-job-success
+  plan:
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        path: error
+    ensure:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - errored job ensure
+          path: echo
+      task: errored-job-ensure
+    on_abort:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - errored job on abort
+          path: echo
+      task: errored-job-on-abort
+    on_error:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - errored job on error
+          path: echo
+      task: errored-job-on-error
+    on_failure:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - errored job on failure
+          path: echo
+      task: errored-job-on-failure
+    on_success:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - errored job on success
+          path: echo
+      task: errored-job-on-success
+    task: error

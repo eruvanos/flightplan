@@ -1,0 +1,50 @@
+jobs:
+- name: external-task-success
+  plan:
+  - get: some-resource
+  - file: some-resource/task_unwrap.yml
+    task: process-task-definition
+  - file: unwrapped-task-resource/task.yml
+    task: run
+    vars:
+      echo_text: Hello World
+      image_resource_type: mock
+- name: external-task-failure
+  plan:
+  - get: some-resource
+  - file: some-resource/task_unwrap.yml
+    task: process-task-definition
+  - file: unwrapped-task-resource/task.yml
+    task: run
+    vars:
+      image_resource_type: mock
+- name: external-task-vars-from-load-var
+  plan:
+  - get: some-resource
+  - file: some-resource/foo.txt
+    load_var: foo
+  - file: some-resource/task_unwrap.yml
+    task: process-task-definition
+  - file: unwrapped-task-resource/task.yml
+    task: run
+    vars:
+      echo_text: ((.:foo))
+      image_resource_type: mock
+- name: task-var-is-defined-but-task-also-needs-vars-from-var-sources
+  plan:
+  - get: some-resource
+  - file: some-resource/task_unwrap.yml
+    task: process-task-definition
+  - file: unwrapped-task-resource/task.yml
+    task: run
+    vars:
+      foo: bar
+      image_resource_type: mock
+resources:
+- name: some-resource
+  source:
+    create_files:
+      foo.txt: bar
+      task.yml: ((task_content))
+      task_unwrap.yml: ((task_unwrap_content))
+  type: mock

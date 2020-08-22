@@ -1,0 +1,15 @@
+jobs:
+- name: rename-simple
+  old_name: simple
+  plan:
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - Hello, world!
+        path: echo
+    task: simple-task

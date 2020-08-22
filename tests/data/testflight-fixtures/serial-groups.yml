@@ -1,0 +1,21 @@
+jobs:
+- name: some-passing-job
+  plan:
+  - get: some-resource
+  serial_groups:
+  - serial-group-1
+- name: some-pending-job
+  plan:
+  - get: pending-resource
+  serial_groups:
+  - serial-group-1
+resources:
+- name: some-resource
+  source:
+    initial_version: ((hash))
+  type: mock
+- name: pending-resource
+  source:
+    initial_version: ((hash))
+    no_initial_version: true
+  type: mock

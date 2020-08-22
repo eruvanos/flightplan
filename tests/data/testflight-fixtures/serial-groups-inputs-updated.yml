@@ -1,0 +1,40 @@
+jobs:
+- name: some-passing-job
+  plan:
+  - get: some-resource
+  serial_groups:
+  - serial-group-1
+- name: some-pending-job
+  plan:
+  - get: other-resource
+  - get: some-resource
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: some-resource
+      - name: other-resource
+      platform: linux
+      run:
+        args:
+        - -c
+        - |
+          cat some-resource/version
+          cat other-resource/version
+        path: sh
+    task: print-versions
+  serial_groups:
+  - serial-group-1
+resources:
+- name: some-resource
+  source:
+    initial_version: ((hash-1))
+    no_initial_version: true
+  type: mock
+- name: other-resource
+  source:
+    initial_version: ((hash-2))
+    no_initial_version: true
+  type: mock

@@ -1,0 +1,27 @@
+jobs:
+- name: first-job
+  plan:
+  - get: some-resource
+- name: pushing-job
+  plan:
+  - get: some-resource
+    passed:
+    - first-job
+  - params:
+      version: some-pushed-version
+    put: pushed-resource
+- name: downstream-job
+  plan:
+  - get: some-resource
+    passed:
+    - pushing-job
+  - get: pushed-resource
+    passed:
+    - pushing-job
+resources:
+- name: some-resource
+  source: {}
+  type: mock
+- name: pushed-resource
+  source: {}
+  type: mock

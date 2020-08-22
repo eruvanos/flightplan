@@ -1,0 +1,31 @@
+jobs:
+- name: clear-task-cache
+  plan:
+  - get: some-resource
+  - config:
+      caches:
+      - path: some-resource/cache
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: some-resource
+      platform: linux
+      run:
+        args:
+        - some-resource/script.sh
+        path: sh
+    task: some-task
+resources:
+- name: some-resource
+  source:
+    create_files:
+      script.sh: |
+        if [ ! -f some-resource/cache/cached-file ]; then
+          echo the-cached-file-already-exists >> some-resource/cache/cached-file
+          echo 'created-cache-file'
+        else
+          cat some-resource/cache/cached-file
+        fi
+  type: mock

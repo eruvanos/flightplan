@@ -3,6 +3,8 @@ import shutil
 import tempfile
 from pathlib import Path
 from subprocess import run, PIPE
+from typing import Dict
+from warnings import warn
 
 import black
 import typer
@@ -10,12 +12,12 @@ import yaml
 from black import WriteBack
 from typer import Typer
 
-from flightplan.render import Pipeline, Get, Put
+from flightplan.render import Pipeline
 
 app = Typer()
 
 
-def load_file(src_py: Path):
+def _load_py_file(src_py: Path):
     import importlib.util
 
     spec = importlib.util.spec_from_file_location("module.name", src_py)
@@ -24,7 +26,13 @@ def load_file(src_py: Path):
     return Pipeline.pipelines
 
 
-def write_file(pipeline: Pipeline, target_yaml: Path):
+def _write_yaml_file(data: Dict, target_yaml: Path):
+    # https://github.com/yaml/pyyaml/issues/103
+    class NoAliasDumper(yaml.SafeDumper):
+        def ignore_aliases(self, data):
+            return True
+
+    # https://github.com/yaml/pyyaml/issues/240
     def str_presenter(dumper, data):
         try:
             dlen = len(data.splitlines())
@@ -34,13 +42,13 @@ def write_file(pipeline: Pipeline, target_yaml: Path):
             return dumper.represent_scalar("tag:yaml.org,2002:str", data)
         return dumper.represent_scalar("tag:yaml.org,2002:str", data)
 
-    yaml.add_representer(str, str_presenter)
+    yaml.add_representer(str, str_presenter, Dumper=NoAliasDumper)
 
     with target_yaml.open("wt") as f:
-        yaml.dump(pipeline.synth(), f)
+        yaml.dump(data, f, Dumper=NoAliasDumper)
 
 
-def write_py_file(pipeline: Pipeline, target: Path):
+def _write_py_file(pipeline: Pipeline, target: Path):
     with target.open("wt") as f:
         f.write("from flightplan.render import *\n")
         f.write("\n")
@@ -53,26 +61,21 @@ def write_py_file(pipeline: Pipeline, target: Path):
         f.write("    pipe.synth()\n")
 
 
-def format_py_file(target: Path):
+def _format_py_file(target: Path):
     black.format_file_in_place(
         target, fast=False, mode=black.FileMode(), write_back=WriteBack.YES
     )
 
 
 def _export_py(raw_data: dict, target: Path):
-    typer.echo(f"✨ Prepare some magic")
-    # Disable Enum representation as string
-    Get.Config.use_enum_values = False
-    Put.Config.use_enum_values = False
-
     typer.echo(f"🗂 Convert to Python")
     pipe = Pipeline.parse_obj(raw_data)
 
     typer.echo(f"📝 Write Python file")
-    write_py_file(pipe, target)
+    _write_py_file(pipe, target)
 
     typer.echo(f"🌇 Format code")
-    format_py_file(target)
+    _format_py_file(target)
 
     typer.echo(f"✅ Done")
 
@@ -94,10 +97,10 @@ def quickstart(output: Path = Path("pipeline.py")):
 @app.command(
     "import", help="Imports a YAML file and renders a Flightplan .py file",
 )
-def _import(source: Path, target: Path):
+def import_yaml(source: Path, target: Path):
     typer.echo(f"📖 Read YAML")
     with source.open() as f:
-        raw = yaml.safe_load(f)
+        raw = yaml.load(f)
 
     _export_py(raw, target)
 
@@ -105,24 +108,25 @@ def _import(source: Path, target: Path):
 @app.command(help="Renders a Concourse YAML file from given .py file")
 def synth(src_py: Path, target_yaml: Path):
     typer.echo(f"📖 Read Python file")
-    pipelines = load_file(src_py)
-    assert len(pipelines) == 1
+    pipelines = _load_py_file(src_py)
+    if len(pipelines) > 0:
+        warn("Multiple pipelines found, will use last one")
 
     typer.echo(f"📝 Write YAML file")
     for pipeline in pipelines[-1:]:
-        write_file(pipeline, target_yaml)
+        _write_yaml_file(pipeline.synth(), target_yaml)
 
     typer.echo(f"✅ Done")
 
 
 @app.command(help="Fly set-pipeline from py. file")
 def set(fly_target: str, pipeline_name: str, src_py: Path):
-    pipelines = load_file(src_py)
+    pipelines = _load_py_file(src_py)
     assert len(pipelines) == 1
 
     with tempfile.TemporaryDirectory() as tmpdirname:
         file = Path(tmpdirname) / f"pipeline.yaml"
-        write_file(pipelines[0], file)
+        _write_yaml_file(pipelines[0].synth(), file)
 
         run(
             [
@@ -147,6 +151,19 @@ def get(fly_target: str, pipeline_name: str, target_py: Path):
 
     raw = yaml.safe_load(io.StringIO(execution.stdout.decode()))
     _export_py(raw, target_py)
+
+
+@app.command(help="Sort keys of a yaml, in place", hidden=True)
+def sort(yaml_file: Path):
+    typer.echo(f"📖 Read 💫 YAML")
+    with yaml_file.open() as f:
+        raw = yaml.safe_load(f)
+
+    typer.echo(f"📝 Write ✨ YAML")
+    with yaml_file.open("w") as f:
+        yaml.safe_dump(raw, f)
+
+    typer.echo(f"✅ Done")
 
 
 def main():

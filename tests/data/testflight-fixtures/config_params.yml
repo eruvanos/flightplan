@@ -1,0 +1,31 @@
+jobs:
+- name: file-test
+  plan:
+  - get: some-resource
+  - file: some-resource/task.yml
+    task: some-task
+- name: file-params-test
+  plan:
+  - get: some-resource
+  - file: some-resource/task.yml
+    params:
+      SOURCE_PARAM: job_params_source
+    task: some-task
+resources:
+- name: some-resource
+  source:
+    create_files:
+      task.yml:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        params:
+          SOURCE_PARAM: file_source
+        platform: linux
+        run:
+          args:
+          - -ec
+          - echo -n 'SOURCE_PARAM is '; printenv SOURCE_PARAM; echo .
+          path: sh
+  type: mock

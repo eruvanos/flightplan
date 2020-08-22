@@ -1,0 +1,14 @@
+jobs:
+- name: input-test
+  plan:
+  - get: some-resource
+resource_types:
+- name: custom-type
+  source:
+    initial_version: custom-type-version
+    mirror_self: true
+  type: mock
+resources:
+- name: some-resource
+  source: {}
+  type: custom-type

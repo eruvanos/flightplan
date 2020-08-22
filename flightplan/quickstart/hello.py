@@ -14,7 +14,7 @@ pipe = Pipeline(
                         platform="linux",
                         image_resource=ImageResource(
                             type="docker-image",
-                            source=Source(repository="busybox", tag="latest"),
+                            source=dict(repository="busybox", tag="latest"),
                         ),
                         run=Command(path="echo", args=["hello world"]),
                         inputs=[],

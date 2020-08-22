@@ -1,0 +1,72 @@
+jobs:
+- name: job-using-optional-inputs
+  plan:
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      outputs:
+      - name: some-data
+      platform: linux
+      run:
+        args:
+        - -c
+        - |
+          set -euxo pipefail
+          echo "banana" > some-data/foo
+          echo "step 1 complete: generated some required data"
+        path: sh
+    task: task-generate-data
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: required-input
+      - name: optional-input
+        optional: true
+      platform: linux
+      run:
+        args:
+        - -c
+        - |
+          set -euxo pipefail
+          ls
+          cat required-input/foo
+          if [ -d optional-input ] ; then
+            echo "error: optional-input should not be present"
+            exit 1
+          fi
+          echo "step 2 complete: tolerates missing optional inputs"
+        path: sh
+    input_mapping:
+      required-input: some-data
+    task: task-missing-optional-input
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: required-input
+      - name: optional-input
+        optional: true
+      platform: linux
+      run:
+        args:
+        - -e
+        - -c
+        - |
+          set -euxo pipefail
+          ls
+          cat required-input/foo
+          cat optional-input/foo  # should exist now
+          echo "step 3 complete: sees mapped optional inputs"
+          echo "SUCCESS"
+        path: sh
+    input_mapping:
+      optional-input: some-data
+      required-input: some-data
+    task: task-with-mapped-optional-input

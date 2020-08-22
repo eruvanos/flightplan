@@ -1,0 +1,51 @@
+jobs:
+- name: duration-fail-job
+  plan:
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - '10'
+        path: sleep
+    ensure:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - duration fail job ensure
+          path: echo
+      task: duration-fail-job-ensure
+    on_failure:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - duration fail job on failure
+          path: echo
+      task: duration-fail-job-on-failure
+    on_success:
+      config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - duration fail job on success
+          path: echo
+      task: duration-fail-job-on-success
+    task: timeout-task
+    timeout: 5s

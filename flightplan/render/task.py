@@ -3,31 +3,53 @@ from typing import List, Dict, Union, Optional, ForwardRef
 
 from pydantic import Field
 
-from flightplan.render.common import Source
 from flightplan.render.utils import BaseModel
 
 
 class Command(BaseModel):
     path: str
-    args: List[str] = None
+    args: Optional[List[str]] = None
+    dir: Optional[str] = None
+    user: Optional[str] = None
 
 
 class ImageResource(BaseModel):
     type: str
-    source: Source
+    source: Dict
+    params: Optional[Dict]
+    version: Optional[Dict[str, str]]
 
 
-class Mapping(BaseModel):
+class Input(BaseModel):
     name: str
+    path: Optional[str] = None
+    optional: Optional[bool] = None
+
+
+class Output(BaseModel):
+    name: str
+    path: Optional[str] = None
+
+
+class Cache(BaseModel):
+    path: str
+
+
+class ContainerLimits(BaseModel):
+    cpu: Optional[int] = None
+    memory: Optional[int] = None
 
 
 class TaskConfig(BaseModel):
     platform: str
     image_resource: ImageResource
+    inputs: Optional[List[Input]] = None
+    outputs: Optional[List[Output]] = None
+    caches: Optional[List[Cache]] = None
+    params: Optional[Dict] = None
     run: Command
-    inputs: List[Mapping] = None
-    outputs: List[Mapping] = None
-    params: Dict[str, Union[bool, int, str, list, dict]] = None
+    rootfs_uri: Optional[str] = None
+    container_limits: Optional[ContainerLimits] = None
 
 
 # Create ForwardRefs for all step types
@@ -38,7 +60,8 @@ SetPipeline = ForwardRef("SetPipeline")
 Do = ForwardRef("Do")
 Try = ForwardRef("Try")
 InParallel = ForwardRef("InParallel")
-Step = Union[Get, Put, Task, SetPipeline, Do, Try, InParallel]
+LoadVar = ForwardRef("LoadVar")
+Step = Union[Get, Put, Task, SetPipeline, Do, Try, InParallel, LoadVar]
 
 
 class _Step(BaseModel):
@@ -72,9 +95,9 @@ class Get(BaseModel):
     get: str
     resource: Optional[str] = None
     passed: List[str] = None
-    params: Dict[str, Union[bool, int, str, list, dict]] = None
+    params: Dict = None
     trigger: bool = False
-    version: Optional[GetVersion] = GetVersion.latest
+    version: Optional[Union[GetVersion, Dict[str, str]]] = GetVersion.latest
 
     # Common fields,
     timeout: Optional[str] = None
@@ -101,9 +124,9 @@ class Put(BaseModel):
 
     put: str
     resource: Optional[str] = None
-    inputs: Optional[PutInput] = PutInput.all
-    params: Dict[str, Union[bool, int, str, list, dict]] = None
-    get_params: Dict[str, Union[bool, int, str, list, dict]] = None
+    inputs: Optional[Union[PutInput, List[str]]] = None
+    params: Dict = None
+    get_params: Dict = None
 
     # Common fields,
     timeout: Optional[str] = None
@@ -120,11 +143,11 @@ class Task(_Step):
     task: str
     config: Optional[TaskConfig] = None
     file: Optional[str] = None
-    # TODO image https://concourse-ci.org/jobs.html#schema.step.task-step.image
+    image: Optional[str] = None
     privileged: bool = False
 
-    vars: Dict[str, Union[bool, int, str, list, dict]] = None
-    params: Dict[str, Union[bool, int, str, list, dict]] = None
+    vars: Dict = None
+    params: Dict = None
     input_mapping: Dict[str, str] = None
     output_mapping: Dict[str, str] = None
 
@@ -141,9 +164,9 @@ class Task(_Step):
 
 class SetPipeline(BaseModel):
     set_pipeline: str
-    file: Optional[str] = None
-    vars: Dict[str, Union[bool, int, str, list, dict]] = None
-    params: Dict[str, Union[bool, int, str, list, dict]] = None
+    file: str
+    vars: Optional[Dict] = None
+    var_files: Optional[List[str]] = None
     team: Optional[str] = None
 
     # Common fields,
@@ -157,14 +180,32 @@ class SetPipeline(BaseModel):
     ensure: Optional[Step] = None
 
 
-# TODO Load_vars: https://concourse-ci.org/jobs.html#schema.step.load-var-step.load_var
+class Format(str, Enum):
+    json = "json"
+    yaml = "yaml"
+    yml = "yml"
+    trim = "trim"
+    raw = "raw"
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}.{self.name}"
+
+
+class LoadVar(BaseModel):
+    class Config:
+        use_enum_values = True
+
+    load_var: str
+    file: str
+    format: Optional[Format] = None
+    reveal: Optional[bool] = None
 
 
 class Do(BaseModel):
     do: List[Step]
     file: Optional[str] = None
-    vars: Dict[str, Union[bool, int, str, list, dict]] = None
-    params: Dict[str, Union[bool, int, str, list, dict]] = None
+    vars: Dict = None
+    params: Dict = None
     team: Optional[str] = None
 
     # Common fields,
@@ -224,6 +265,7 @@ Do.update_forward_refs()
 Try.update_forward_refs()
 InParallelConfig.update_forward_refs()
 InParallel.update_forward_refs()
+LoadVar.update_forward_refs()
 
 # Redefine step with set up models (update_forward_refs)
-Step = Union[Get, Put, Task, SetPipeline, Do, Try, InParallel]
+Step = Union[Get, Put, Task, SetPipeline, Do, Try, InParallel, LoadVar]

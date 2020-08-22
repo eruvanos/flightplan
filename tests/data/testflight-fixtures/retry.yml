@@ -1,0 +1,106 @@
+jobs:
+- name: retry-job
+  plan:
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      outputs:
+      - name: attempts-log
+      platform: linux
+      run:
+        args:
+        - attempts-log/attempts
+        path: touch
+    task: initial-output
+  - attempts: 5
+    config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: attempts-log
+        path: old
+      outputs:
+      - name: attempts-log
+        path: new
+      platform: linux
+      run:
+        args:
+        - -ec
+        - |
+          cp old/attempts new/
+
+          echo attempt >> new/attempts
+          attempts=$(cat new/attempts | wc -l)
+
+          echo $attempts > /tmp/retry_number
+          echo -n "attempts: $attempts; "
+
+          if [ $attempts -eq 3 ]; then
+            echo 'success!'
+          else
+            echo 'failing'
+            exit 1
+          fi
+        path: sh
+    task: succeed-on-3rd-attempt
+- name: retry-job-fail-for-hijacking
+  plan:
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      outputs:
+      - name: attempts-log
+      platform: linux
+      run:
+        args:
+        - attempts-log/attempts
+        path: touch
+    task: initial-output
+  - attempts: 5
+    config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: attempts-log
+        path: old
+      outputs:
+      - name: attempts-log
+        path: new
+      platform: linux
+      run:
+        args:
+        - -ec
+        - |
+          cp old/attempts new/
+
+          echo attempt >> new/attempts
+          attempts=$(cat new/attempts | wc -l)
+
+          echo $attempts > /tmp/retry_number
+          echo -n "attempts: $attempts; "
+
+          if [ $attempts -eq 3 ]; then
+            echo 'success!'
+          else
+            echo 'failing'
+            exit 1
+          fi
+        path: sh
+    task: succeed-on-3rd-attempt
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        path: 'false'
+    task: fail

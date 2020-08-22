@@ -1,0 +1,29 @@
+jobs:
+- name: use-vars
+  plan:
+  - get: resource-using-vars
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: resource-using-vars
+      platform: linux
+      run:
+        args:
+        - -exc
+        - |
+          test "((vs:some_var))" = "hello-im-a-var"
+          test "((vs:"var:with.and_colon".some_key))" = "some-value"
+          test "$(cat resource-using-vars/version)" = "hello-im-a-version"
+          test "$(cat resource-using-vars/some_file)" = "42"
+        path: sh
+    task: use-vars
+resources:
+- name: resource-using-vars
+  source:
+    create_files:
+      some_file: ((vs:some_numeric_var))
+    initial_version: ((vs:initial_version_var))
+  type: mock

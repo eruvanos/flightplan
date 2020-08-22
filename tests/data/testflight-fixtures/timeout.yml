@@ -1,0 +1,30 @@
+---
+jobs:
+- name: duration-successful-job
+  plan:
+  - get: image
+  - task: passing-task
+    timeout: 5m
+    image: image
+    config:
+      platform: linux
+      run:
+        path: echo
+        args: ["passing-task succeeded"]
+
+- name: duration-fail-job
+  plan:
+  - get: image
+  - task: timeout-task
+    image: image
+    timeout: 5s
+    config:
+      platform: linux
+      run:
+        path: sleep
+        args: ["10"]
+
+resources:
+- name: image
+  type: mock
+  source: {mirror_self: true}

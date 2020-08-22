@@ -1,0 +1,29 @@
+jobs:
+- name: resource-getter
+  plan:
+  - get: my-resource
+    trigger: true
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      inputs:
+      - name: my-resource
+      platform: linux
+      run:
+        args:
+        - my-resource/version
+        path: cat
+    task: print-fetched-stuff
+resource_types:
+- name: mock
+  source:
+    initial_version: mirror-((hash))
+    mirror_self: true
+  type: mock
+resources:
+- name: my-resource
+  source:
+    initial_version: ((hash))
+  type: mock

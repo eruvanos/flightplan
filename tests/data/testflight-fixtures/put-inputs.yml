@@ -1,0 +1,138 @@
+jobs:
+- name: job-using-specified-inputs
+  plan:
+  - get: specified-input
+  - get: all-input
+  - inputs:
+    - specified-input
+    put: some-resource
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - -c
+        - exit 1
+        path: sh
+    task: failing-task
+- name: job-using-all-inputs
+  plan:
+  - get: specified-input
+  - get: all-input
+  - inputs: all
+    put: some-resource
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - -c
+        - exit 1
+        path: sh
+    task: failing-task
+- name: job-using-empty-inputs
+  plan:
+  - get: specified-input
+  - get: all-input
+  - inputs: []
+    put: some-resource
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - -c
+        - exit 1
+        path: sh
+    task: failing-task
+- name: job-using-no-inputs
+  plan:
+  - get: specified-input
+  - get: all-input
+  - put: some-resource
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - -c
+        - exit 1
+        path: sh
+    task: failing-task
+- name: job-using-detect-inputs-simple
+  plan:
+  - get: specified-input
+  - get: all-input
+  - inputs: detect
+    params:
+      not_there: does-not-exist
+      specified: specified-input/something
+    put: some-resource
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - -c
+        - exit 1
+        path: sh
+    task: failing-task
+- name: job-using-detect-inputs-complex
+  plan:
+  - get: specified-input
+  - get: all-input
+  - get: map-input
+  - inputs: detect
+    params:
+      map_param:
+        some-input: map-input/input
+        false: does-not-exist-too
+      specified:
+      - - specified-input/something
+        - 123456
+      - - does-not-exist
+    put: some-resource
+  - config:
+      image_resource:
+        source:
+          mirror_self: true
+        type: mock
+      platform: linux
+      run:
+        args:
+        - -c
+        - exit 1
+        path: sh
+    task: failing-task
+resources:
+- name: specified-input
+  source:
+    initial_version: v1
+  type: mock
+- name: all-input
+  source:
+    initial_version: v1
+  type: mock
+- name: map-input
+  source:
+    initial_version: v1
+  type: mock
+- name: some-resource
+  source:
+    initial_version: v1
+  type: mock

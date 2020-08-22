@@ -1,0 +1,37 @@
+jobs:
+- name: do-job
+  plan:
+  - do:
+    - config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - running do step 1
+          path: echo
+      task: do-1
+    - config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - running do step 2
+          path: echo
+      task: do-2
+    - config:
+        image_resource:
+          source:
+            mirror_self: true
+          type: mock
+        platform: linux
+        run:
+          args:
+          - running do step 3
+          path: echo
+      task: some-git-resource-do-3

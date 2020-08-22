@@ -1,0 +1,25 @@
+jobs:
+- name: get-resource
+  plan:
+  - get: recursive-custom-resource
+resource_types:
+- name: mock-resource-parent
+  source:
+    initial_version: parent-version
+    mirror_self: true
+  type: mock
+- name: mock-resource-child
+  source:
+    initial_version: child-version
+    mirror_self: true
+  type: mock-resource-parent
+- name: mock-resource-grandchild
+  source:
+    initial_version: grandchild-version
+    mirror_self: true
+  type: mock-resource-child
+resources:
+- name: recursive-custom-resource
+  source:
+    initial_version: hella-nested
+  type: mock-resource-grandchild

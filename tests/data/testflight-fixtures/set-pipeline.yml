@@ -1,0 +1,40 @@
+jobs:
+- name: sp
+  plan:
+  - get: some-resource
+  - file: some-resource/pipeline.yml
+    set_pipeline: ((pipeline_name))
+    team: ((team_name))
+    var_files:
+    - some-resource/name.yml
+    vars:
+      greetings: hello
+  public: true
+resources:
+- name: some-resource
+  source:
+    create_files:
+      name.yml: |
+        ---
+        name: somebody
+      pipeline.yml: |
+        ---
+        jobs:
+        # The sp job is required so the pipeline is not GC'd after `set_pipeline: self`
+        - name: sp
+          plan:
+          - set_pipeline: self
+            file: does-not-matter
+        - name: normal-job
+          public: true
+          plan:
+          - task: a-task
+            config:
+              platform: linux
+              image_resource:
+                type: mock
+                source: {mirror_self: true}
+              run:
+                path: echo
+                args: ["hello world"]
+  type: mock
