@@ -31,6 +31,7 @@ from flightplan.render.task import (
     Put,
     PutInput,
 )
+from flightplan.render.var import Var
 
 __all__ = [
     "BuildLogRetentionPolicy",
@@ -58,6 +59,7 @@ __all__ = [
     "Try",
     "Task",
     "TaskConfig",
+    "Var",
     "VarSource",
     "VarSourceType",
 ]

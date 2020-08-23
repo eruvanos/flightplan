@@ -33,7 +33,6 @@ def tmp_yaml(tmp_dir: Path):
         T("Hello World", get_resource("hello_world.yaml")),
         T("CF Deployment", get_resource("simple_cf_deploy.yaml")),
         T("Simple Python pipeline", get_resource("simple_python.yaml")),
-        
         # Testflight ymls from https://github.com/concourse/concourse/tree/master/testflight/fixtures
         T("archive-pipeline-1.yml", "archive-pipeline-1.yml"),
         T("archive-pipeline-2.yml", "archive-pipeline-2.yml"),
@@ -42,8 +41,12 @@ def tmp_yaml(tmp_dir: Path):
         T("clear-task-cache.yml", "clear-task-cache.yml"),
         T("config-test.yml", "config-test.yml"),
         T("config_params.yml", "config_params.yml"),
-        # T("container_limits.yml", "container_limits.yml"), Memory limit not int -> 1GB
-        # T("container_limits_failing.yml", "container_limits_failing.yml"), Memory limit not int -> 1GB
+        T(
+            "container_limits.yml", "container_limits.yml"
+        ),  # Memory limit not int -> 1GB
+        T(
+            "container_limits_failing.yml", "container_limits_failing.yml"
+        ),  # Memory limit not int -> 1GB
         T("custom-resource-type.yml", "custom-resource-type.yml"),
         T("do.yml", "do.yml"),
         T("fail.yml", "fail.yml"),
@@ -58,8 +61,8 @@ def tmp_yaml(tmp_dir: Path):
         # T("matrix.yml", "matrix.yml"), Uses deprecated aggregate
         # T("nested-config-test.yml", "nested-config-test.yml"), missing source in resource 1
         T("optional-inputs.yml", "optional-inputs.yml"),
-        # T("pinned-resource-simple-trigger.yml", "pinned-resource-simple-trigger.yml"), TODO Handle vars in this place
-        # T("pinned-version.yml", "pinned-version.yml"), TODO Handle vars in this place
+        T("pinned-resource-simple-trigger.yml", "pinned-resource-simple-trigger.yml"),
+        T("pinned-version.yml", "pinned-version.yml"),
         T("propagation.yml", "propagation.yml"),
         T("put-inputs.yml", "put-inputs.yml"),
         T("reconfiguring.yml", "reconfiguring.yml"),
@@ -73,7 +76,7 @@ def tmp_yaml(tmp_dir: Path):
         ),
         T("resource-type-versions.yml", "resource-type-versions.yml"),
         # T("resource-types.yml", "resource-types.yml"), Missing image_resource
-        # T("resource-types-privileged.yml", "resource-types-privileged.yml"), TODO handle variables in places of numbers
+        T("resource-types-privileged.yml", "resource-types-privileged.yml"),
         T("resource-types-with-params.yml", "resource-types-with-params.yml"),
         T("resource-version-every.yml", "resource-version-every.yml"),
         T("resource-version-latest.yml", "resource-version-latest.yml"),

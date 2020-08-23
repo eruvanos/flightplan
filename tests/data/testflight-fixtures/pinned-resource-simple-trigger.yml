@@ -1,27 +1,25 @@
----
-resources:
-- name: some-resource
-  type: mock
-  version: ((pinned_resource_version))
-  source:
-    no_initial_version: true
-
-    # this initial version is to make it unique and isnt really used
-    initial_version: ((hash))
-
 jobs:
 - name: some-passing-job
   plan:
   - get: some-resource
     version: ((version_config))
-  - task: print-version
-    config:
-      platform: linux
+  - config:
       image_resource:
+        source:
+          mirror_self: true
         type: mock
-        source: {mirror_self: true}
       inputs:
       - name: some-resource
+      platform: linux
       run:
+        args:
+        - some-resource/version
         path: cat
-        args: [some-resource/version]
+    task: print-version
+resources:
+- name: some-resource
+  source:
+    initial_version: ((hash))
+    no_initial_version: true
+  type: mock
+  version: ((pinned_resource_version))

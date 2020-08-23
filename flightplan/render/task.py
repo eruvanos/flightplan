@@ -3,6 +3,7 @@ from typing import List, Dict, Union, Optional, ForwardRef
 
 from pydantic import Field
 
+from flightplan.render.var import Var
 from flightplan.render.utils import BaseModel
 
 
@@ -36,8 +37,8 @@ class Cache(BaseModel):
 
 
 class ContainerLimits(BaseModel):
-    cpu: Optional[int] = None
-    memory: Optional[int] = None
+    cpu: Optional[Union[Var, int]] = None
+    memory: Optional[Union[Var, int, str]] = None
 
 
 class TaskConfig(BaseModel):
@@ -71,7 +72,7 @@ class _Step(BaseModel):
 
     # Common fields,
     timeout: Optional[str] = None
-    attempts: Optional[int] = None
+    attempts: Optional[Union[Var, int]] = None
     tags: Optional[List[str]] = None
     on_success: Optional[Step] = None
     on_failure: Optional[Step] = None
@@ -97,11 +98,11 @@ class Get(BaseModel):
     passed: List[str] = None
     params: Dict = None
     trigger: bool = False
-    version: Optional[Union[GetVersion, Dict[str, str]]] = GetVersion.latest
+    version: Optional[Union[Var, GetVersion, Dict[str, str]]] = GetVersion.latest
 
     # Common fields,
     timeout: Optional[str] = None
-    attempts: Optional[int] = None
+    attempts: Optional[Union[Var, int]] = None
     tags: Optional[List[str]] = None
     on_success: Optional[Step] = None
     on_failure: Optional[Step] = None
@@ -124,13 +125,13 @@ class Put(BaseModel):
 
     put: str
     resource: Optional[str] = None
-    inputs: Optional[Union[PutInput, List[str]]] = None
+    inputs: Optional[Union[Var, PutInput, List[str]]] = None
     params: Dict = None
     get_params: Dict = None
 
     # Common fields,
     timeout: Optional[str] = None
-    attempts: Optional[int] = None
+    attempts: Optional[Union[Var, int]] = None
     tags: Optional[List[str]] = None
     on_success: Optional[Step] = None
     on_failure: Optional[Step] = None
@@ -153,7 +154,7 @@ class Task(_Step):
 
     # Common fields,
     timeout: Optional[str] = None
-    attempts: Optional[int] = None
+    attempts: Optional[Union[Var, int]] = None
     tags: Optional[List[str]] = None
     on_success: Optional[Step] = None
     on_failure: Optional[Step] = None
@@ -171,7 +172,7 @@ class SetPipeline(BaseModel):
 
     # Common fields,
     timeout: Optional[str] = None
-    attempts: Optional[int] = None
+    attempts: Optional[Union[Var, int]] = None
     tags: Optional[List[str]] = None
     on_success: Optional[Step] = None
     on_failure: Optional[Step] = None
@@ -197,8 +198,8 @@ class LoadVar(BaseModel):
 
     load_var: str
     file: str
-    format: Optional[Format] = None
-    reveal: Optional[bool] = None
+    format: Optional[Union[Var, Format]] = None
+    reveal: Optional[Union[Var, bool]] = None
 
 
 class Do(BaseModel):
@@ -210,7 +211,7 @@ class Do(BaseModel):
 
     # Common fields,
     timeout: Optional[str] = None
-    attempts: Optional[int] = None
+    attempts: Optional[Union[Var, int]] = None
     tags: Optional[List[str]] = None
     on_success: Optional[Step] = None
     on_failure: Optional[Step] = None
@@ -227,7 +228,7 @@ class Try(BaseModel):
 
     # Common fields,
     timeout: Optional[str] = None
-    attempts: Optional[int] = None
+    attempts: Optional[Union[Var, int]] = None
     tags: Optional[List[str]] = None
     on_success: Optional[Step] = None
     on_failure: Optional[Step] = None
@@ -238,7 +239,7 @@ class Try(BaseModel):
 
 class InParallelConfig(BaseModel):
     steps: List[Step]
-    limit: Optional[int] = None
+    limit: Optional[Union[Var, int]] = None
     fail_fast: bool = False
 
 
@@ -247,7 +248,7 @@ class InParallel(BaseModel):
 
     # Common fields,
     timeout: Optional[str] = None
-    attempts: Optional[int] = None
+    attempts: Optional[Union[Var, int]] = None
     tags: Optional[List[str]] = None
     on_success: Optional[Step] = None
     on_failure: Optional[Step] = None

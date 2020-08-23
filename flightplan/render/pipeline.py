@@ -1,9 +1,10 @@
 from enum import Enum
-from typing import Dict, List, ClassVar, Optional, Any
+from typing import Dict, List, ClassVar, Optional, Any, Union
 
 from flightplan.render.job import Job
 from flightplan.render.task import Get, Put, LoadVar
 from flightplan.render.utils import BaseModel
+from flightplan.render.var import Var
 
 
 class Resource(BaseModel):
@@ -12,10 +13,10 @@ class Resource(BaseModel):
     source: Dict
     old_name: Optional[str]
     icon: Optional[str]
-    version: Optional[Dict[str, str]]
+    version: Optional[Union[Var, Dict[str, str]]]
     check_every: Optional[str]
     tags: Optional[List[str]]
-    public: Optional[bool]
+    public: Optional[Union[Var, bool]]
     webhook_token: Optional[str]
 
 
@@ -23,11 +24,11 @@ class ResourceType(BaseModel):
     name: str
     type: str
     source: Dict
-    privileged: Optional[bool] = None
+    privileged: Optional[Union[Var, bool]] = None
     params: Optional[Dict] = None
     check_every: Optional[str] = None
     tags: Optional[List[str]] = None
-    unique_version_history: Optional[bool] = None
+    unique_version_history: Optional[Union[Var, bool]] = None
 
 
 class GroupConfig(BaseModel):

@@ -72,6 +72,7 @@ Convert a pipeline from fly and render a flightplan `.py` file.
 fp get <fly_target> <pipeline_name> <target.py>
 ```
 
+> Static and dynamic vars will be imported as `Var(str)`, if the type of the field is limited to an int or Enum type.
 
 ### Synthesize yaml from flightplan `.py` file
 

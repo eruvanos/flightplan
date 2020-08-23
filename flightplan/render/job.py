@@ -1,13 +1,14 @@
-from typing import List, Optional
+from typing import List, Optional, Union
 
+from flightplan.render.var import Var
 from flightplan.render.task import Task, Step
 from flightplan.render.utils import BaseModel
 
 
 class BuildLogRetentionPolicy(BaseModel):
-    days: Optional[int] = None
-    builds: Optional[int] = None
-    minimum_succeeded_builds: Optional[int] = None
+    days: Optional[Union[Var, int]] = None
+    builds: Optional[Union[Var, int]] = None
+    minimum_succeeded_builds: Optional[Union[Var, int]] = None
 
 
 class Job(BaseModel):
@@ -17,12 +18,12 @@ class Job(BaseModel):
     old_name: Optional[str]
     serial: Optional[bool] = None
     build_log_retention: Optional[BuildLogRetentionPolicy] = None
-    build_logs_to_retain: Optional[int] = None
+    build_logs_to_retain: Optional[Union[Var, int]] = None
     serial_groups: Optional[List[str]] = None
-    max_in_flight: Optional[int] = None
+    max_in_flight: Optional[Union[Var, int]] = None
     public: Optional[bool] = None
     disable_manual_trigger: Optional[bool] = None
-    interruptible: Optional[bool] = None
+    interruptible: Optional[Union[Var, bool]] = None
     on_success: Optional[Step] = None
     on_failure: Optional[Step] = None
     on_abort: Optional[Step] = None
