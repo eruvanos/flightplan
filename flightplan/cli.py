@@ -12,7 +12,7 @@ import yaml
 from black import WriteBack
 from typer import Typer
 
-from flightplan.render import Pipeline
+from flightplan.render import Pipeline, Var
 
 app = Typer()
 
@@ -42,7 +42,11 @@ def _write_yaml_file(data: Dict, target_yaml: Path):
             return dumper.represent_scalar("tag:yaml.org,2002:str", data)
         return dumper.represent_scalar("tag:yaml.org,2002:str", data)
 
+    def var_presenter(dumper, data):
+        return dumper.represent_scalar("tag:yaml.org,2002:str", str(data))
+
     yaml.add_representer(str, str_presenter, Dumper=NoAliasDumper)
+    yaml.add_representer(Var, var_presenter, Dumper=NoAliasDumper)
 
     with target_yaml.open("wt") as f:
         yaml.dump(data, f, Dumper=NoAliasDumper)
@@ -58,7 +62,7 @@ def _write_py_file(pipeline: Pipeline, target: Path):
         f.write("\n")
         f.write("\n")
         f.write("if __name__ == '__main__':\n")
-        f.write("    pipe.synth()\n")
+        f.write("    print(pipe.synth())\n")
 
 
 def _format_py_file(target: Path):

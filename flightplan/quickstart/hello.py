@@ -27,4 +27,4 @@ pipe = Pipeline(
 )
 
 if __name__ == "__main__":
-    pipe.synth()
+    print(pipe.synth())
