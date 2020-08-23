@@ -2,7 +2,7 @@
 
 # Flight plan - Plan your Concourse Pipeline with ease
 
-AWS CDK like tool to code Concourse pipelines, (with autocompletion and validation.)
+AWS CDK like tool to code Concourse pipelines (with autocompletion.)
 
 ## Why not stick with YAML
 
