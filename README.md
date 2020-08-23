@@ -95,31 +95,32 @@ Quickstart hello world example:
 ```python
 from flightplan.render import *
 
-Pipeline(
+pipe = Pipeline(
+    resource_types=[],
+    resources=[],
     jobs=[
         Job(
-            name='job-hello-world',
+            name="job-hello-world",
             public=True,
             plan=[
                 Task(
-                    task='hello-world',
+                    task="hello-world",
                     config=TaskConfig(
-                        platform='linux',
+                        platform="linux",
                         image_resource=ImageResource(
-                            type='docker-image',
-                            source=dict(
-                                repository='busybox',
-                                tag='latest'
-                            )
+                            type="docker-image",
+                            source=dict(repository="busybox", tag="latest"),
                         ),
-                        run=Command(
-                            path='echo',
-                            args=['hello world']
-                        )
-                    )
+                        run=Command(path="echo", args=["hello world"]),
+                        inputs=[],
+                        outputs=[],
+                    ),
                 )
-            ]
+            ],
         )
-    ]
-).synth()
+    ],
+)
+
+if __name__ == "__main__":
+    print(pipe.synth())
 ``` 
