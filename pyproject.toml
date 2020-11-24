@@ -4,6 +4,24 @@ version = "0.1.0b7"
 description = "Code based description for Concourse pipelines"
 authors = ["Maic Siemering <maic@siemering.tech>"]
 license = "MIT"
+readme = "README.md"
+homepage="https://github.com/eruvanos/flightplan"
+repository="https://github.com/eruvanos/flightplan"
+documentation="https://github.com/eruvanos/flightplan"
+keywords = ["concourse", "yaml", "ci/cd"]
+
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    'Topic :: Software Development :: Build Tools',
+    'Topic :: Software Development :: Code Generators',
+]
 
 [tool.poetry.dependencies]
 python = "^3.8"
