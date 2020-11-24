@@ -104,7 +104,7 @@ def quickstart(output: Path = Path("pipeline.py")):
 def import_yaml(source: Path, target: Path):
     typer.echo(f"📖 Read YAML")
     with source.open() as f:
-        raw = yaml.load(f)
+        raw = yaml.safe_load(f)
 
     _export_py(raw, target)
 
