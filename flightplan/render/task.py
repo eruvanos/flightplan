@@ -244,7 +244,7 @@ class InParallelConfig(BaseModel):
 
 
 class InParallel(BaseModel):
-    in_parallel: InParallelConfig
+    in_parallel: Union[List[Step], InParallelConfig]
 
     # Common fields,
     timeout: Optional[str] = None

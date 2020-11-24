@@ -1,0 +1,17 @@
+jobs:
+- name: github-orgs
+  plan:
+  - in_parallel:
+    - get: src1
+    - put: src2
+resources:
+- name: src1
+  source:
+    branch: main
+    uri: some-repo
+  type: git
+- name: src2
+  source:
+    branch: main
+    uri: some-repo
+  type: git

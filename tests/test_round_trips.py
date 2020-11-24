@@ -97,6 +97,9 @@ def tmp_yaml(tmp_dir: Path):
         T("try.yml", "try.yml"),
         T("var-sources.yml", "var-sources.yml"),
         T("volume-mounting.yml", "volume-mounting.yml"),
+
+        # Custom
+        T("in_parallel_simple_array.yml", "in_parallel_simple_array.yml"),
     ],
 )
 def test_round_trip(tmp_py, tmp_yaml, pipeline_yaml):
