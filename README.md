@@ -42,8 +42,10 @@ Flightplan requires Python 3.8 and higher.
 
 ### Install FlightPlan
 
+Flightplan requires `fly` to be installed on path.
+
 ```bash
-pip3 install git+https://github.com/eruvanos/flightplan.git
+pip3 install flightplan
 ```
 
 ## Usage

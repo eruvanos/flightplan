@@ -6,3 +6,5 @@
 
 *.pyc
 flightplan.egg-info
+
+dist/
