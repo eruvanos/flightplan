@@ -95,17 +95,6 @@ fp set <fly-target> <pipeline_name> <src.py>
 ```
 
 
-## Development
-
-The project is managed with [uv](https://docs.astral.sh/uv/).
-
-```bash
-uv sync               # create .venv with all dependencies
-uv run pytest         # run the tests
-uv run -p 3.11 pytest # run the tests with a specific Python version
-uv build              # build sdist and wheel
-```
-
 ## Examples
 
 Quickstart hello world example:
