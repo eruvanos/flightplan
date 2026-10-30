@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List, Dict, Union, Optional, ForwardRef
 
-from pydantic import Field
+from pydantic import ConfigDict, Field
 
 from flightplan.render.var import Var
 from flightplan.render.utils import BaseModel
@@ -17,8 +17,8 @@ class Command(BaseModel):
 class ImageResource(BaseModel):
     type: str
     source: Dict
-    params: Optional[Dict]
-    version: Optional[Dict[str, str]]
+    params: Optional[Dict] = None
+    version: Optional[Dict[str, str]] = None
 
 
 class Input(BaseModel):
@@ -90,13 +90,10 @@ class GetVersion(str, Enum):
 
 
 class Get(BaseModel):
-    class Config:
-        use_enum_values = True
-
     get: str
     resource: Optional[str] = None
-    passed: List[str] = None
-    params: Dict = None
+    passed: Optional[List[str]] = None
+    params: Optional[Dict] = None
     trigger: bool = False
     version: Optional[Union[Var, GetVersion, Dict[str, str]]] = GetVersion.latest
 
@@ -120,14 +117,11 @@ class PutInput(str, Enum):
 
 
 class Put(BaseModel):
-    class Config:
-        use_enum_values = True
-
     put: str
     resource: Optional[str] = None
     inputs: Optional[Union[Var, PutInput, List[str]]] = None
-    params: Dict = None
-    get_params: Dict = None
+    params: Optional[Dict] = None
+    get_params: Optional[Dict] = None
 
     # Common fields,
     timeout: Optional[str] = None
@@ -147,10 +141,10 @@ class Task(_Step):
     image: Optional[str] = None
     privileged: bool = False
 
-    vars: Dict = None
-    params: Dict = None
-    input_mapping: Dict[str, str] = None
-    output_mapping: Dict[str, str] = None
+    vars: Optional[Dict] = None
+    params: Optional[Dict] = None
+    input_mapping: Optional[Dict[str, str]] = None
+    output_mapping: Optional[Dict[str, str]] = None
 
     # Common fields,
     timeout: Optional[str] = None
@@ -193,9 +187,6 @@ class Format(str, Enum):
 
 
 class LoadVar(BaseModel):
-    class Config:
-        use_enum_values = True
-
     load_var: str
     file: str
     format: Optional[Union[Var, Format]] = None
@@ -205,8 +196,8 @@ class LoadVar(BaseModel):
 class Do(BaseModel):
     do: List[Step]
     file: Optional[str] = None
-    vars: Dict = None
-    params: Dict = None
+    vars: Optional[Dict] = None
+    params: Optional[Dict] = None
     team: Optional[str] = None
 
     # Common fields,
@@ -221,8 +212,7 @@ class Do(BaseModel):
 
 
 class Try(BaseModel):
-    class Config:
-        allow_population_by_field_name = True
+    model_config = ConfigDict(validate_by_name=True)
 
     try_: Step = Field(alias="try")
 
@@ -258,15 +248,15 @@ class InParallel(BaseModel):
 
 
 # https://pydantic-docs.helpmanual.io/usage/postponed_annotations/
-Get.update_forward_refs()
-Put.update_forward_refs()
-Task.update_forward_refs()
-SetPipeline.update_forward_refs()
-Do.update_forward_refs()
-Try.update_forward_refs()
-InParallelConfig.update_forward_refs()
-InParallel.update_forward_refs()
-LoadVar.update_forward_refs()
+Get.model_rebuild()
+Put.model_rebuild()
+Task.model_rebuild()
+SetPipeline.model_rebuild()
+Do.model_rebuild()
+Try.model_rebuild()
+InParallelConfig.model_rebuild()
+InParallel.model_rebuild()
+LoadVar.model_rebuild()
 
 # Redefine step with set up models (update_forward_refs)
 Step = Union[Get, Put, Task, SetPipeline, Do, Try, InParallel, LoadVar]

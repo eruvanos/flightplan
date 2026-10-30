@@ -13,9 +13,9 @@ class BuildLogRetentionPolicy(BaseModel):
 
 class Job(BaseModel):
     name: str
-    plan: List[Step] = None
+    plan: Optional[List[Step]] = None
 
-    old_name: Optional[str]
+    old_name: Optional[str] = None
     serial: Optional[bool] = None
     build_log_retention: Optional[BuildLogRetentionPolicy] = None
     build_logs_to_retain: Optional[Union[Var, int]] = None
@@ -29,9 +29,6 @@ class Job(BaseModel):
     on_abort: Optional[Step] = None
     on_error: Optional[Step] = None
     ensure: Optional[Step] = None
-
-    class Config:
-        use_enum_values = True
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

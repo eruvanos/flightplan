@@ -1,9 +1,8 @@
 from enum import Enum
-from typing import Dict, List, ClassVar, Optional, Any, Union
+from typing import Dict, List, ClassVar, Optional, Union
 
 from flightplan.render.job import Job
-from flightplan.render.task import Get, Put, LoadVar
-from flightplan.render.utils import BaseModel
+from flightplan.render.utils import BaseModel, enum_values
 from flightplan.render.var import Var
 
 
@@ -11,13 +10,13 @@ class Resource(BaseModel):
     name: str
     type: str
     source: Dict
-    old_name: Optional[str]
-    icon: Optional[str]
-    version: Optional[Union[Var, Dict[str, str]]]
-    check_every: Optional[str]
-    tags: Optional[List[str]]
-    public: Optional[Union[Var, bool]]
-    webhook_token: Optional[str]
+    old_name: Optional[str] = None
+    icon: Optional[str] = None
+    version: Optional[Union[Var, Dict[str, str]]] = None
+    check_every: Optional[str] = None
+    tags: Optional[List[str]] = None
+    public: Optional[Union[Var, bool]] = None
+    webhook_token: Optional[str] = None
 
 
 class ResourceType(BaseModel):
@@ -45,19 +44,16 @@ class VarSourceType(str, Enum):
 
 
 class VarSource(BaseModel):
-    class Config:
-        use_enum_values = True
-
     name: str
     type: VarSourceType
     config: Dict
 
 
 class Pipeline(BaseModel):
-    jobs: List[Job] = None
-    resources: List[Resource] = None
-    resource_types: List[ResourceType] = None
-    var_source: Optional[VarSource]
+    jobs: Optional[List[Job]] = None
+    resources: Optional[List[Resource]] = None
+    resource_types: Optional[List[ResourceType]] = None
+    var_source: Optional[VarSource] = None
     groups: Optional[List[GroupConfig]] = None
 
     pipelines: ClassVar[List["Pipeline"]] = []
@@ -83,26 +79,12 @@ class Pipeline(BaseModel):
         self.resources.append(resource)
 
     def synth(self):
-        return self.dict(
-            by_alias=True,
-            exclude={"name"},
-            exclude_unset=True,
-            # exclude_none=True,
-            # exclude_defaults=True,
+        return enum_values(
+            self.model_dump(
+                by_alias=True,
+                exclude={"name"},
+                exclude_unset=True,
+                # exclude_none=True,
+                # exclude_defaults=True,
+            )
         )
-
-    @classmethod
-    def parse_obj(cls, obj: Any) -> "Pipeline":
-        models_contain_enum = [Get, Put, LoadVar, VarSource]
-
-        # Disable Enum representation as string
-        for model in models_contain_enum:
-            model.Config.use_enum_values = False
-
-        result = super().parse_obj(obj)
-
-        # Enable Enum representation as string
-        for model in models_contain_enum:
-            model.Config.use_enum_values = True
-
-        return result

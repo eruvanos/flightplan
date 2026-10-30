@@ -67,13 +67,13 @@ def _write_py_file(pipeline: Pipeline, target: Path):
 
 def _format_py_file(target: Path):
     black.format_file_in_place(
-        target, fast=False, mode=black.FileMode(), write_back=WriteBack.YES
+        target, fast=False, mode=black.Mode(), write_back=WriteBack.YES
     )
 
 
 def _export_py(raw_data: dict, target: Path):
     typer.echo(f"🗂 Convert to Python")
-    pipe = Pipeline.parse_obj(raw_data)
+    pipe = Pipeline.model_validate(raw_data)
 
     typer.echo(f"📝 Write Python file")
     _write_py_file(pipe, target)
@@ -113,7 +113,7 @@ def import_yaml(source: Path, target: Path):
 def synth(src_py: Path, target_yaml: Path):
     typer.echo(f"📖 Read Python file")
     pipelines = _load_py_file(src_py)
-    if len(pipelines) > 0:
+    if len(pipelines) > 1:
         warn("Multiple pipelines found, will use last one")
 
     typer.echo(f"📝 Write YAML file")

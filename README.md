@@ -38,7 +38,7 @@ automatically available to all pipelines.
 
 ## Setup 
 
-Flightplan requires Python 3.8 and higher.
+Flightplan requires Python 3.11 and higher.
 
 ### Install FlightPlan
 
@@ -46,6 +46,8 @@ Flightplan requires `fly` to be installed on path.
 
 ```bash
 pip3 install flightplan
+# or
+uv tool install flightplan
 ```
 
 ## Usage
@@ -93,6 +95,16 @@ fp set <fly-target> <pipeline_name> <src.py>
 ```
 
 
+## Development
+
+The project is managed with [uv](https://docs.astral.sh/uv/).
+
+```bash
+uv sync               # create .venv with all dependencies
+uv run pytest         # run the tests
+uv run -p 3.11 pytest # run the tests with a specific Python version
+uv build              # build sdist and wheel
+```
 
 ## Examples
 
