@@ -1,6 +1,6 @@
 [project]
 name = "flightplan"
-version = "0.2.0"
+version = "0.2.1"
 description = "Code based description for Concourse pipelines"
 authors = [{ name = "Maic Siemering", email = "maic@siemering.tech" }]
 license = "MIT"
